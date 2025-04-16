@@ -7,6 +7,6 @@ import (
 )
 
 func main() {
-	s := strings.Split("I have an banana, a apple, and a orange.", " ")
+	s := strings.Split("I have an banana, a apple, and a orange, an horse, a honor.", " ")
 	fmt.Println(strings.Join(goreloaded.CheckAorAn(s), " "))
 }
