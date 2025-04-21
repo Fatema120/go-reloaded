@@ -2,11 +2,36 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"goreloaded"
-	"strings"
 )
 
 func main() {
-	s := strings.Split("I have an banana, a apple, and a orange, an horse, a honor.", " ")
-	fmt.Println(strings.Join(goreloaded.CheckAorAn(s), " "))
+	// Check arguments
+	if len(os.Args) != 3 {
+		fmt.Println("Usage: go run main.go <input_file> <output_file>")
+		return
+	}
+
+	inputFile := os.Args[1]
+	outputFile := os.Args[2]
+
+	// Read input file
+	inputData, err := os.ReadFile(inputFile)
+	if err != nil {
+		fmt.Printf("Error reading input file: %v\n", err)
+		return
+	}
+
+	// Process the text
+	processedText := goreloaded.TextEditor(string(inputData))
+
+	// Write to output file
+	err = os.WriteFile(outputFile, []byte(processedText), 0644)
+	if err != nil {
+		fmt.Printf("Error writing to output file: %v\n", err)
+		return
+	}
+
+	fmt.Println("Processing complete. Output saved to:", outputFile)
 }
