@@ -7,21 +7,6 @@ import (
 	"strings"
 )
 
-// isContraction checks if a word contains a common English contraction
-// (like 's, 't, 'm, etc.) but is not just a standalone apostrophe
-// Returns true if the word contains a valid contraction pattern
-func isContraction(word string) bool {
-	// List of common English contractions
-	contractions := []string{"'s", "'t", "'m", "'re", "'ll", "'ve", "'d"}
-	for _, c := range contractions {
-		// Check if the word contains the contraction but doesn't start or end with just an apostrophe
-		if strings.Contains(word, c) && !strings.HasPrefix(word, "'") && !strings.HasSuffix(word, "'") {
-			return true
-		}
-	}
-	return false
-}
-
 // handleSingleQuotes processes text to properly format single quotes according to typographical rules
 // It handles opening and closing quotes by attaching them to the appropriate words
 // Returns a new slice with properly formatted quotes
@@ -50,29 +35,7 @@ func handleSingleQuotes(s []string) []string {
 			continue
 		}
 
-		// Case 2: Handle word that ends with a quote (not a contraction)
-		if strings.HasSuffix(s[i], "'") && !isContraction(s[i]) {
-			// Check if this is a closing quote following an opening quote
-			if i > 0 && (strings.HasPrefix(s[i-1], "'") || strings.Contains(s[i-1], " '")) {
-				// This is likely a closing quote - keep as is
-				result = append(result, s[i])
-			} else {
-				// Attach the closing quote to the previous word if possible
-				if len(result) > 0 {
-					result[len(result)-1] = result[len(result)-1] + "'"
-					s[i] = strings.TrimSuffix(s[i], "'")
-					if s[i] != "" {
-						result = append(result, s[i])
-					}
-				} else {
-					result = append(result, s[i])
-				}
-			}
-			i++
-			continue
-		}
-
-		// Case 3: Handle word that starts with a quote
+		// Case 2: Handle word that starts with a quote
 		if strings.HasPrefix(s[i], "'") {
 			// This is likely an opening quote - keep as is
 			result = append(result, s[i])
@@ -80,7 +43,7 @@ func handleSingleQuotes(s []string) []string {
 			continue
 		}
 
-		// Case 4: Regular word with no quote handling needed
+		// Case 3: Regular word with no quote handling needed
 		result = append(result, s[i])
 		i++
 	}
@@ -163,6 +126,7 @@ func CheckPunctuation(s []string) []string {
 					}
 				}
 			}
+			
 			i++
 		}
 	}
