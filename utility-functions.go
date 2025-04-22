@@ -353,6 +353,10 @@ func CheckReq(arr []string) []string {
 				os.Exit(1)
 			}
 
+			if back < 0 {
+				back = -back
+			}
+
 			if strings.ToLower(arr[i]) == "(cap," {
 				// Standalone command - apply to previous n words
 				if i-back < 0 {
@@ -379,9 +383,14 @@ func CheckReq(arr []string) []string {
 
 		} else if strings.Contains(strings.ToLower(arr[i]), "(low,") {
 			back, err := strconv.Atoi(trimBrackets(arr[i+1]))
+
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)
+			}
+
+			if back < 0 {
+				back = -back
 			}
 
 			if strings.ToLower(arr[i]) == "(low," {
@@ -410,6 +419,10 @@ func CheckReq(arr []string) []string {
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)
+			}
+
+			if back < 0 {
+				back = -back
 			}
 
 			if strings.ToLower(arr[i]) == "(up," {

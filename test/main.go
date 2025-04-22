@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"goreloaded"
+	"os"
+	"strings"
 )
 
 func main() {
@@ -15,6 +16,11 @@ func main() {
 
 	inputFile := os.Args[1]
 	outputFile := os.Args[2]
+
+	if !strings.HasSuffix(inputFile, ".txt") || !strings.HasSuffix(outputFile, ".txt") {
+		fmt.Println("Error: Required .txt file")
+		return
+	}
 
 	// Read input file
 	inputData, err := os.ReadFile(inputFile)
