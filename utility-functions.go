@@ -126,7 +126,7 @@ func CheckPunctuation(s []string) []string {
 					}
 				}
 			}
-			
+
 			i++
 		}
 	}
