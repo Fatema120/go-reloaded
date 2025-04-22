@@ -30,7 +30,7 @@ func handleSingleQuotes(s []string) []string {
 	result := make([]string, 0, len(s))
 	i := 0
 	isOpening := 0 // Tracks if we've seen an opening quote
-	
+
 	for i < len(s) {
 		// Case 1: Handle standalone quote character
 		if s[i] == "'" {
@@ -188,9 +188,9 @@ func CheckAorAn(s []string) []string {
 				// Special handling for 'h' words - some 'h' words take 'an' despite starting with consonant
 				if strings.HasPrefix(s[i+1], "h") {
 					// Words like "hour", "honest" take "an" because the 'h' is silent
-					if strings.HasPrefix(s[i+1], "hour") || strings.HasPrefix(s[i+1], "honest") || 
-                       strings.HasPrefix(s[i+1], "honor") || strings.HasPrefix(s[i+1], "heir") || 
-                       strings.HasPrefix(s[i+1], "herb") {
+					if strings.HasPrefix(s[i+1], "hour") || strings.HasPrefix(s[i+1], "honest") ||
+						strings.HasPrefix(s[i+1], "honor") || strings.HasPrefix(s[i+1], "heir") ||
+						strings.HasPrefix(s[i+1], "herb") {
 						s[i] = "an"
 					}
 				} else {
@@ -266,7 +266,7 @@ func InitCap(s string) string {
 // Returns a new slice with the commands processed and removed
 func CheckReq(arr []string) []string {
 	for i := 0; i < len(arr); i++ {
-		
+
 		// Handle single-word formatting commands
 		if strings.Contains(strings.ToLower(arr[i]), "(cap)") {
 			if strings.Contains(strings.ToLower(arr[i]), "(cap)") {
@@ -340,10 +340,9 @@ func CheckReq(arr []string) []string {
 			}
 		}
 
-		
-        // Handle multi-word formatting commands with numeric parameter
-        // Format: (command,n) where n is the number of words to affect
-		if strings.Contains(strings.ToLower(arr[i]), "(cap,") {
+		// Handle multi-word formatting commands with numeric parameter
+		// Format: (command,n) where n is the number of words to affect
+		if strings.Contains(strings.ToLower(arr[i]), "(cap,") && len(arr[i]) == 5 {
 			// Extract the number from the next token
 			//back, err := strconv.Atoi(strings.TrimSuffix(arr[i+1][0:], ")"))
 			back, err := strconv.Atoi(trimBrackets(arr[i+1]))
@@ -381,7 +380,7 @@ func CheckReq(arr []string) []string {
 				arr = append(arr[:i+1], arr[i+2:]...)
 			}
 
-		} else if strings.Contains(strings.ToLower(arr[i]), "(low,") {
+		} else if strings.Contains(strings.ToLower(arr[i]), "(low,") && len(arr[i]) == 5 {
 			back, err := strconv.Atoi(trimBrackets(arr[i+1]))
 
 			if err != nil {
@@ -411,11 +410,11 @@ func CheckReq(arr []string) []string {
 					arr[i-j] = InitCap(arr[i-j])
 				}
 
-				arr = append(arr[:i+1], arr[i+2:]...) 
+				arr = append(arr[:i+1], arr[i+2:]...)
 			}
 
-		} else if strings.Contains(strings.ToLower(arr[i]), "(up,") {
-			back, err := strconv.Atoi(trimBrackets(arr[i+1])) 
+		} else if strings.Contains(strings.ToLower(arr[i]), "(up,") && len(arr[i]) == 4 {
+			back, err := strconv.Atoi(trimBrackets(arr[i+1]))
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)
@@ -438,12 +437,12 @@ func CheckReq(arr []string) []string {
 				}
 
 			} else {
-				arr[i] = strings.ToUpper(strings.TrimSuffix(arr[i], arr[i][len(arr[i])-4:])) 
+				arr[i] = strings.ToUpper(strings.TrimSuffix(arr[i], arr[i][len(arr[i])-4:]))
 				for j := 1; j <= back-1; j++ {
 					arr[i-j] = InitCap(arr[i-j])
 				}
 
-				arr = append(arr[:i+1], arr[i+2:]...) 
+				arr = append(arr[:i+1], arr[i+2:]...)
 			}
 		}
 	}
@@ -451,8 +450,7 @@ func CheckReq(arr []string) []string {
 	return arr
 }
 
-
-func trimBrackets (s string) string {
+func trimBrackets(s string) string {
 	for strings.Contains(s, ")") {
 		s = strings.TrimSuffix(s, ")")
 	}
