@@ -138,8 +138,8 @@ func CheckPunctuation(s []string) []string {
 // Used for handling "a" vs "an" article selection
 // Returns true if the string starts with a vowel
 func CheckVowel(s string) bool {
-	return strings.HasPrefix(s, "a") || strings.HasPrefix(s, "e") || strings.HasPrefix(s, "i") ||
-		strings.HasPrefix(s, "o") || strings.HasPrefix(s, "u") || strings.HasPrefix(s, "y")
+	return strings.HasPrefix(strings.ToLower(s), "a") || strings.HasPrefix(strings.ToLower(s), "e") || strings.HasPrefix(strings.ToLower(s), "i") ||
+		strings.HasPrefix(strings.ToLower(s), "o") || strings.HasPrefix(strings.ToLower(s), "u") || strings.HasPrefix(strings.ToLower(s), "y")
 }
 
 // CheckAorAn corrects the usage of "a" and "an" articles based on whether
@@ -233,7 +233,7 @@ func CheckReq(arr []string) []string {
 
 		// Handle single-word formatting commands
 		if strings.Contains(strings.ToLower(arr[i]), "(cap)") {
-			if strings.Contains(strings.ToLower(arr[i]), "(cap)") {
+			if strings.ToLower(arr[i]) == "(cap)" {
 				// Standalone command - apply to previous word
 				if i-1 < 0 {
 					arr = arr[i+1:] // Remove command if no previous word
@@ -243,8 +243,15 @@ func CheckReq(arr []string) []string {
 					i--
 				}
 			} else {
-				// Command attached to word - apply to current word
-				arr[i] = InitCap(strings.TrimSuffix(strings.ToLower(arr[i]), "(cap)"))
+				// Command attached to the end of the word - apply to current word
+				if strings.HasSuffix(strings.ToLower(arr[i]), "(cap)") {
+					arr[i] = InitCap(strings.TrimSuffix(strings.ToLower(arr[i]), "(cap)"))
+				} else if strings.HasPrefix(strings.ToLower(arr[i]), "(cap)") && i-1 > 0 {
+					// Command attached at the beginning of the word - apply to rhe previous word
+					arr[i-1] = InitCap(arr[i-1])
+					arr[i] = strings.TrimPrefix(strings.ToLower(arr[i]), "(cap)")
+				}
+				//arr[i] = InitCap(strings.TrimSuffix(strings.ToLower(arr[i]), "(cap)"))
 			}
 		} else if strings.Contains(strings.ToLower(arr[i]), "(low)") {
 			if strings.ToLower(arr[i]) == "(low)" {
@@ -257,8 +264,15 @@ func CheckReq(arr []string) []string {
 					i--
 				}
 			} else {
-				// Command attached to word - apply to current word
-				arr[i] = strings.ToLower(strings.TrimSuffix(strings.ToLower(arr[i]), "(low)"))
+				// Command attached to the end of the word - apply to current word
+				if strings.HasSuffix(strings.ToLower(arr[i]), "(low)") {
+					arr[i] = strings.ToLower(strings.TrimSuffix(strings.ToLower(arr[i]), "(low)"))
+				} else if strings.HasPrefix(strings.ToLower(arr[i]), "(low)") && i-1 > 0 {
+					// Command attached at the beginning of the word - apply to rhe previous word
+					arr[i-1] = strings.ToLower(arr[i-1])
+					arr[i] = strings.TrimPrefix(strings.ToLower(arr[i]), "(low)")
+				}
+				//arr[i] = strings.ToLower(strings.TrimSuffix(strings.ToLower(arr[i]), "(low)"))
 			}
 		} else if strings.Contains(strings.ToLower(arr[i]), "(up)") {
 			if strings.ToLower(arr[i]) == "(up)" {
@@ -271,8 +285,15 @@ func CheckReq(arr []string) []string {
 					i--
 				}
 			} else {
-				// Command attached to word - apply to current word
-				arr[i] = strings.ToUpper(strings.TrimSuffix(strings.ToLower(arr[i]), "(up)"))
+				// Command attached to the end of the word - apply to current word
+				if strings.HasSuffix(strings.ToLower(arr[i]), "(up)") {
+					arr[i] = strings.ToUpper(strings.TrimSuffix(strings.ToLower(arr[i]), "(up)"))
+				} else if strings.HasPrefix(strings.ToLower(arr[i]), "(up)") && i-1 > 0 {
+					// Command attached at the beginning of the word - apply to rhe previous word
+					arr[i-1] = strings.ToUpper(arr[i-1])
+					arr[i] = strings.TrimPrefix(strings.ToLower(arr[i]), "(up)")
+				}
+				//arr[i] = strings.ToUpper(strings.TrimSuffix(strings.ToLower(arr[i]), "(up)"))
 			}
 		} else if strings.Contains(strings.ToLower(arr[i]), "(bin)") {
 			if strings.ToLower(arr[i]) == "(bin)" {
@@ -285,8 +306,15 @@ func CheckReq(arr []string) []string {
 					i--
 				}
 			} else {
-				// Command attached to word - apply to current word
-				arr[i] = string(BinaryToInteger(strings.TrimSuffix(strings.ToLower(arr[i]), "(bin)")))
+				// Command attached to the end of the word - apply to current word
+				if strings.HasSuffix(strings.ToLower(arr[i]), "(bin)") {
+					arr[i] = string(BinaryToInteger(strings.TrimSuffix(strings.ToLower(arr[i]), "(bin)")))
+				} else if strings.HasPrefix(strings.ToLower(arr[i]), "(bin)") && i-1 > 0 {
+					// Command attached at the beginning of the word - apply to rhe previous word
+					arr[i-1] = BinaryToInteger(arr[i-1])
+					arr[i] = strings.TrimPrefix(strings.ToLower(arr[i]), "(bin)")
+				}
+				//arr[i] = string(BinaryToInteger(strings.TrimSuffix(strings.ToLower(arr[i]), "(bin)")))
 			}
 		} else if strings.Contains(strings.ToLower(arr[i]), "(hex)") {
 			if strings.ToLower(arr[i]) == "(hex)" {
@@ -299,14 +327,21 @@ func CheckReq(arr []string) []string {
 					i--
 				}
 			} else {
-				// Command attached to word - apply to current word
-				arr[i] = string(HexadecimalToInteger(strings.TrimSuffix(strings.ToLower(arr[i]), "(hex)")))
+				// Command attached to the end of the word - apply to current word
+				if strings.HasSuffix(strings.ToLower(arr[i]), "(hex)") {
+					arr[i] = string(HexadecimalToInteger(strings.TrimSuffix(strings.ToLower(arr[i]), "(hex)")))
+				} else if strings.HasPrefix(strings.ToLower(arr[i]), "(hex)") && i-1 > 0 {
+					// Command attached at the beginning of the word - apply to rhe previous word
+					arr[i-1] = HexadecimalToInteger(arr[i-1])
+					arr[i] = strings.TrimPrefix(strings.ToLower(arr[i]), "(hex)")
+				}
+				//arr[i] = string(HexadecimalToInteger(strings.TrimSuffix(strings.ToLower(arr[i]), "(hex)")))
 			}
 		}
 
 		// Handle multi-word formatting commands with numeric parameter
 		// Format: (command,n) where n is the number of words to affect
-		if strings.Contains(strings.ToLower(arr[i]), "(cap,") && len(arr[i]) == 5 {
+		if strings.Contains(strings.ToLower(arr[i]), "(cap,") && len(arr[i]) == 5 && i+1 < len(arr) && len(arr[i+1]) == 2 {
 			// Extract the number from the next token
 			//back, err := strconv.Atoi(strings.TrimSuffix(arr[i+1][0:], ")"))
 			back, err := strconv.Atoi(trimBrackets(arr[i+1]))
@@ -344,7 +379,7 @@ func CheckReq(arr []string) []string {
 				arr = append(arr[:i+1], arr[i+2:]...)
 			}
 
-		} else if strings.Contains(strings.ToLower(arr[i]), "(low,") && len(arr[i]) == 5 {
+		} else if strings.Contains(strings.ToLower(arr[i]), "(low,") && len(arr[i]) == 5 && i+1 < len(arr) && len(arr[i+1]) == 2 {
 			back, err := strconv.Atoi(trimBrackets(arr[i+1]))
 
 			if err != nil {
@@ -377,7 +412,7 @@ func CheckReq(arr []string) []string {
 				arr = append(arr[:i+1], arr[i+2:]...)
 			}
 
-		} else if strings.Contains(strings.ToLower(arr[i]), "(up,") && len(arr[i]) == 4 {
+		} else if strings.Contains(strings.ToLower(arr[i]), "(up,") && len(arr[i]) == 4 && i+1 < len(arr) && len(arr[i+1]) == 2 {
 			back, err := strconv.Atoi(trimBrackets(arr[i+1]))
 			if err != nil {
 				fmt.Println(err)
