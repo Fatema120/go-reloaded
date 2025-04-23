@@ -341,7 +341,7 @@ func CheckReq(arr []string) []string {
 
 		// Handle multi-word formatting commands with numeric parameter
 		// Format: (command,n) where n is the number of words to affect
-		if strings.Contains(strings.ToLower(arr[i]), "(cap,") && len(arr[i]) == 5 && i+1 < len(arr) && len(arr[i+1]) == 2 {
+		if strings.Contains(strings.ToLower(arr[i]), "(cap,") && len(arr[i]) == 5 {
 			// Extract the number from the next token
 			//back, err := strconv.Atoi(strings.TrimSuffix(arr[i+1][0:], ")"))
 			back, err := strconv.Atoi(trimBrackets(arr[i+1]))
@@ -369,17 +369,8 @@ func CheckReq(arr []string) []string {
 					i--
 				}
 				//[harold, hhh, (cap, 2))]
-			} else {
-				// Command attached to word - apply to current word and previous n
-				arr[i] = InitCap(strings.TrimSuffix(arr[i], arr[i][len(arr[i])-5:]))
-				for j := 1; j <= back-1; j++ {
-					arr[i-j] = InitCap(arr[i-j])
-				}
-
-				arr = append(arr[:i+1], arr[i+2:]...)
 			}
-
-		} else if strings.Contains(strings.ToLower(arr[i]), "(low,") && len(arr[i]) == 5 && i+1 < len(arr) && len(arr[i+1]) == 2 {
+		} else if strings.Contains(strings.ToLower(arr[i]), "(low,") && len(arr[i]) == 5 {
 			back, err := strconv.Atoi(trimBrackets(arr[i+1]))
 
 			if err != nil {
@@ -403,16 +394,9 @@ func CheckReq(arr []string) []string {
 					i--
 				}
 
-			} else {
-				arr[i] = strings.ToLower(strings.TrimSuffix(arr[i], arr[i][len(arr[i])-5:]))
-				for j := 1; j <= back-1; j++ {
-					arr[i-j] = InitCap(arr[i-j])
-				}
-
-				arr = append(arr[:i+1], arr[i+2:]...)
 			}
 
-		} else if strings.Contains(strings.ToLower(arr[i]), "(up,") && len(arr[i]) == 4 && i+1 < len(arr) && len(arr[i+1]) == 2 {
+		} else if strings.Contains(strings.ToLower(arr[i]), "(up,") && len(arr[i]) == 4 {
 			back, err := strconv.Atoi(trimBrackets(arr[i+1]))
 			if err != nil {
 				fmt.Println(err)
@@ -435,13 +419,6 @@ func CheckReq(arr []string) []string {
 					i--
 				}
 
-			} else {
-				arr[i] = strings.ToUpper(strings.TrimSuffix(arr[i], arr[i][len(arr[i])-4:]))
-				for j := 1; j <= back-1; j++ {
-					arr[i-j] = InitCap(arr[i-j])
-				}
-
-				arr = append(arr[:i+1], arr[i+2:]...)
 			}
 		}
 	}
