@@ -39,6 +39,7 @@ func handleSingleQuotes(s []string) []string {
 		if strings.HasPrefix(s[i], "'") {
 			// This is likely an opening quote - keep as is
 			result = append(result, s[i])
+			isOpening++
 			i++
 			continue
 		}
